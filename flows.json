@@ -230,7 +230,7 @@
         "order": 2,
         "width": "13",
         "height": "12",
-        "format": "<link rel=\"stylesheet\" href=\"/css/imgareaselect-default.css\">\n<script src=\"/js/jquery.imgareaselect.js\"></script>\n\n<div id=\"{{'view_'+$id}}\" style=\"width:640px; height:360px\">\n    <div id=\"{{'frame_'+$id}}\" style=\"width:100%; height:100%; position:relative\">\n        <img id=\"{{'image_'+$id}}\" class=\"card-img-top\" src=\"\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\">\n        <canvas id=\"{{'canvas_'+$id}}\" width=\"1000\" height=\"1000\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\"></canvas>\n    </div>\n</div>\n\n<script>\nvar ctx = null;\nvar imageWidth = 640;\nvar imageHeight = 360;\nvar transperancy = 1.0;\n\nvar selectionArea = null;\nvar areaName = null;\n\nfunction ClearCanvas() {\n    if(ctx) {\n        ctx.beginPath();\n        ctx.clearRect(0, 0, 1000, 1000 );\n        ctx.stroke();\n    }\n\n    if( selectionArea )\n        selectionArea.setOptions({ hide: true });\n    selectionArea = null;        \n}\n\n\n(function(scope) {\n    scope.$watch('msg', function(msg) {\n        if( !msg || !msg.topic ||  typeof msg.topic === undefined || !msg.payload )\n            return;\n        console.log(msg.topic);\n\n\n        if( msg.topic === \"transperancy\" ) {\n            transperancy = parseFloat(msg.payload) / 100.0;\n        }\n\n        if( msg.topic === \"camera\") {\n            imageWidth = 640;\n            imageHeight = 360;\n            \n            if( msg.payload.image.aspect === \"1:1\") {\n                imageWidth = 640;\n                imageHeight = 640;\n            }\n\n            if( msg.payload.image.aspect === \"4:3\") {\n                imageWidth = 640;\n                imageHeight = 480;\n            }\n\n\n            $(\"#view_\" + scope.$id).css(\"width\",imageWidth + \"px\");\n            $(\"#view_\" + scope.$id).css(\"height\",imageHeight + \"px\");\n            \n            if( msg.payload.image.jpeg)\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ' + msg.payload.image.jpeg);\n            else\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n            \n            if(!ctx) {\n                canvas = document.getElementById(\"canvas_\"+scope.$id);\n                ctx = canvas.getContext(\"2d\");\n            }\n            ClearCanvas();\n            return;\n        }\n\n        if( msg.topic === \"paths\" ) {\n            if(!ctx)\n                return;\n            ClearCanvas();\n        \tif( msg.payload.length > 5 )\n            \tctx.globalAlpha = transperancy;\n            else\n                ctx.globalAlpha = 1.0;\n                \n            msg.payload.forEach(function(object){\n                var first = object.path[0];\n                var last = object.path[object.path.length-1];\n\n            \tctx.beginPath();\n            \tctx.lineWidth = 3;\n            \tctx.strokeStyle = '#00FF00';\n            \tctx.moveTo(first.x, first.y );\n            \tctx.arc(first.x, first.y, 3, 0, 2 * Math.PI);\n            \tctx.stroke();\t\n\n            \tctx.beginPath();\n            \tctx.strokeStyle = '#FFFF00';\n            \tctx.moveTo(object.path[0].x, object.path[0].y );\n            \tfor( var i = 1; i < object.path.length; i++ )\n            \t\tctx.lineTo(object.path[i].x,object.path[i].y );\n            \tctx.lineTo(last.x,last.y );\n            \tctx.stroke();\t\n            \n            \tctx.beginPath();\n            \tctx.lineWidth = 3;\n            \tctx.strokeStyle = '#FF0000';\n            \tctx.moveTo(last.x, last.y );\n            \tctx.arc(last.x, last.y, 3, 0, 2 * Math.PI);\n            \tctx.stroke();\t\n            });\n\t\t\treturn;\n        }\n\n        if( msg.topic === \"reset\" ) {\n            ClearCanvas();\n            $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n\t\t\treturn;\n        }\n\n\t\tif( msg.topic === \"birth\" || msg.topic === \"death\" ) {\n\t\t    areaName = msg.topic;\n\t\t    if(!selectionArea) {\n    \t\t\tselectionArea = $(\"#image_\"+scope.$id).imgAreaSelect( {\n    \t\t\t\tx1: parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\t\tx2: parseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\t\ty1: parseInt(msg.payload.y1 / 1000 * imageHeight),\n    \t\t\t\ty2: parseInt(msg.payload.y2 / 1000 * imageHeight),\n    \t\t\t\tshow: true, hide:false, minHeight: 5, minWidth: 5, handles: true, movable: true, resizable: true, instance:true,\n    \t\t\t\tonSelectEnd: function( image, area ) {\n    \t\t\t\t    var area = {\n                            x1: parseInt((area.x1/imageWidth) * 1000),\n                            x2: parseInt((area.x2/imageWidth) * 1000),\n                            y1: parseInt((area.y1/imageHeight) * 1000),\n                            y2: parseInt((area.y2/imageHeight) * 1000)\n    \t\t\t\t    }\n    \t\t\t\t\tscope.send({\n    \t\t\t\t\t\ttopic: areaName,\n    \t\t\t\t\t\tpayload: area\n    \t\t\t\t\t});\n    \t\t\t\t}\n    \t\t\t});\n\t\t    }\n\t\t    selectionArea.setSelection(\n\t\t        parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y1 / 1000 * imageHeight),\n\t\t\t\tparseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y2 / 1000 * imageHeight)\n\t\t    );\n            selectionArea.setOptions({ show: true });\n\t\t}\n    });\n})(scope);\n</script>        \n",
+        "format": "<link rel=\"stylesheet\" href=\"/css/imgareaselect-default.css\">\n<script src=\"/js/jquery.imgareaselect.js\"></script>\n\n<div id=\"{{'view_'+$id}}\" style=\"width:640px; height:360px\">\n    <div id=\"{{'frame_'+$id}}\" style=\"width:100%; height:100%; position:relative\">\n        <img id=\"{{'image_'+$id}}\" class=\"card-img-top\" src=\"\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\">\n        <canvas id=\"{{'canvas_'+$id}}\" width=\"1000\" height=\"1000\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\"></canvas>\n    </div>\n</div>\n\n<script>\nvar ctx = null;\nvar imageWidth = 640;\nvar imageHeight = 360;\nvar transperancy = 1.0;\n\nvar selectionArea = null;\nvar areaName = null;\n\nfunction ClearCanvas() {\n    if(ctx) {\n        ctx.beginPath();\n        ctx.clearRect(0, 0, 1000, 1000 );\n        ctx.stroke();\n    }\n\n    if( selectionArea )\n        selectionArea.setOptions({ hide: true });\n    selectionArea = null;        \n}\n\n\n(function(scope) {\n    scope.$watch('msg', function(msg) {\n        if( !msg || !msg.topic ||  typeof msg.topic === undefined || !msg.payload )\n            return;\n        console.log(msg.topic);\n\n\n        if( msg.topic === \"transperancy\" ) {\n            transperancy = parseFloat(msg.payload) / 100.0;\n        }\n\n        if( msg.topic === \"camera\") {\n            imageWidth = 640;\n            imageHeight = 360;\n            \n            if( msg.payload.image.aspect === \"1:1\") {\n                imageWidth = 640;\n                imageHeight = 640;\n            }\n\n            if( msg.payload.image.aspect === \"4:3\") {\n                imageWidth = 640;\n                imageHeight = 480;\n            }\n\n\n            $(\"#view_\" + scope.$id).css(\"width\",imageWidth + \"px\");\n            $(\"#view_\" + scope.$id).css(\"height\",imageHeight + \"px\");\n            \n            if( msg.payload.image.jpeg)\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ' + msg.payload.image.jpeg);\n            else\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n            \n            if(!ctx) {\n                canvas = document.getElementById(\"canvas_\"+scope.$id);\n                ctx = canvas.getContext(\"2d\");\n            }\n            ClearCanvas();\n            return;\n        }\n\n        if( msg.topic === \"image\") {\n            if( msg.payload.base64)\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ' + msg.payload.base64);\n            return;\n        }\n\n\n        if( msg.topic === \"paths\" ) {\n            if(!ctx)\n                return;\n            ClearCanvas();\n        \tif( msg.payload.length > 5 )\n            \tctx.globalAlpha = transperancy;\n            else\n                ctx.globalAlpha = 1.0;\n                \n            msg.payload.forEach(function(object){\n                var first = object.path[0];\n                var last = object.path[object.path.length-1];\n\n            \tctx.beginPath();\n            \tctx.lineWidth = 3;\n            \tctx.strokeStyle = '#00FF00';\n            \tctx.moveTo(first.x, first.y );\n            \tctx.arc(first.x, first.y, 3, 0, 2 * Math.PI);\n            \tctx.stroke();\t\n\n            \tctx.beginPath();\n            \tctx.strokeStyle = '#FFFF00';\n            \tctx.moveTo(object.path[0].x, object.path[0].y );\n            \tfor( var i = 1; i < object.path.length; i++ )\n            \t\tctx.lineTo(object.path[i].x,object.path[i].y );\n            \tctx.lineTo(last.x,last.y );\n            \tctx.stroke();\t\n            \n            \tctx.beginPath();\n            \tctx.lineWidth = 3;\n            \tctx.strokeStyle = '#FF0000';\n            \tctx.moveTo(last.x, last.y );\n            \tctx.arc(last.x, last.y, 3, 0, 2 * Math.PI);\n            \tctx.stroke();\t\n            });\n\t\t\treturn;\n        }\n\n        if( msg.topic === \"reset\" ) {\n            ClearCanvas();\n            $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n\t\t\treturn;\n        }\n\n\t\tif( msg.topic === \"birth\" || msg.topic === \"death\" ) {\n\t\t    areaName = msg.topic;\n\t\t    if(!selectionArea) {\n    \t\t\tselectionArea = $(\"#image_\"+scope.$id).imgAreaSelect( {\n    \t\t\t\tx1: parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\t\tx2: parseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\t\ty1: parseInt(msg.payload.y1 / 1000 * imageHeight),\n    \t\t\t\ty2: parseInt(msg.payload.y2 / 1000 * imageHeight),\n    \t\t\t\tshow: true, hide:false, minHeight: 5, minWidth: 5, handles: true, movable: true, resizable: true, instance:true,\n    \t\t\t\tonSelectEnd: function( image, area ) {\n    \t\t\t\t    var area = {\n                            x1: parseInt((area.x1/imageWidth) * 1000),\n                            x2: parseInt((area.x2/imageWidth) * 1000),\n                            y1: parseInt((area.y1/imageHeight) * 1000),\n                            y2: parseInt((area.y2/imageHeight) * 1000)\n    \t\t\t\t    }\n    \t\t\t\t\tscope.send({\n    \t\t\t\t\t\ttopic: areaName,\n    \t\t\t\t\t\tpayload: area\n    \t\t\t\t\t});\n    \t\t\t\t}\n    \t\t\t});\n\t\t    }\n\t\t    selectionArea.setSelection(\n\t\t        parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y1 / 1000 * imageHeight),\n\t\t\t\tparseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y2 / 1000 * imageHeight)\n\t\t    );\n            selectionArea.setOptions({ show: true });\n\t\t}\n    });\n})(scope);\n</script>        \n",
         "storeOutMessages": false,
         "fwdInMessages": false,
         "resendOnRefresh": false,
@@ -762,7 +762,7 @@
         "z": "8e42a2bf.e54b8",
         "name": "Data",
         "info": "",
-        "x": 1190,
+        "x": 1010,
         "y": 380,
         "wires": []
     },
@@ -790,6 +790,49 @@
         "info": "",
         "x": 970,
         "y": 80,
+        "wires": []
+    },
+    {
+        "id": "597076107473225f",
+        "type": "link in",
+        "z": "8e42a2bf.e54b8",
+        "name": "",
+        "links": [
+            "f176d46fa40bd346"
+        ],
+        "x": 285,
+        "y": 460,
+        "wires": [
+            [
+                "daa2daa3.3b2fb8",
+                "1727de701c9cd7c8"
+            ]
+        ]
+    },
+    {
+        "id": "9d28b370db31b5ba",
+        "type": "comment",
+        "z": "8e42a2bf.e54b8",
+        "name": "image",
+        "info": "",
+        "x": 170,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "1727de701c9cd7c8",
+        "type": "debug",
+        "z": "8e42a2bf.e54b8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 460,
         "wires": []
     },
     {
@@ -872,7 +915,9 @@
         "y": 100,
         "wires": [
             [
-                "44f2f0f64df1d55a"
+                "44f2f0f64df1d55a",
+                "4aa478fd20427eac",
+                "612d445635fd947b"
             ]
         ]
     },
@@ -1084,7 +1129,7 @@
         "z": "3658f92f65d797b7",
         "name": "Paths",
         "info": "",
-        "x": 1160,
+        "x": 1170,
         "y": 100,
         "wires": []
     },
@@ -1148,6 +1193,116 @@
         "info": "",
         "x": 130,
         "y": 220,
+        "wires": []
+    },
+    {
+        "id": "4aa478fd20427eac",
+        "type": "debug",
+        "z": "3658f92f65d797b7",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "612d445635fd947b",
+        "type": "function",
+        "z": "3658f92f65d797b7",
+        "name": "Find",
+        "func": "msg.device = msg.payload.device;\nmsg.payload = {\n    device: msg.payload.device,\n    id: msg.payload.id\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 140,
+        "wires": [
+            [
+                "6a4a0749f5e736c1"
+            ]
+        ]
+    },
+    {
+        "id": "6a4a0749f5e736c1",
+        "type": "mongodb in",
+        "z": "3658f92f65d797b7",
+        "mongodb": "b12a9cc543227135",
+        "name": "",
+        "collection": "images",
+        "operation": "find",
+        "x": 780,
+        "y": 140,
+        "wires": [
+            [
+                "2968775d47f5ff0a"
+            ]
+        ]
+    },
+    {
+        "id": "93addc6a9cff0257",
+        "type": "debug",
+        "z": "3658f92f65d797b7",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1150,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "2968775d47f5ff0a",
+        "type": "function",
+        "z": "3658f92f65d797b7",
+        "name": "image",
+        "func": "if( msg.payload.length !== 1 )\n    return;\nmsg.topic = \"image\";\nmsg.payload = msg.payload[0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 140,
+        "wires": [
+            [
+                "f176d46fa40bd346",
+                "93addc6a9cff0257"
+            ]
+        ]
+    },
+    {
+        "id": "f176d46fa40bd346",
+        "type": "link out",
+        "z": "3658f92f65d797b7",
+        "name": "image",
+        "mode": "link",
+        "links": [
+            "597076107473225f"
+        ],
+        "x": 1095,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "81fea0c80c7bd309",
+        "type": "comment",
+        "z": "3658f92f65d797b7",
+        "name": "image",
+        "info": "",
+        "x": 1170,
+        "y": 140,
         "wires": []
     },
     {
@@ -2137,7 +2292,8 @@
         "y": 100,
         "wires": [
             [
-                "b2920347a89cd63e"
+                "b2920347a89cd63e",
+                "f323272c30e60592"
             ]
         ]
     },
@@ -2178,7 +2334,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 170,
-        "y": 280,
+        "y": 560,
         "wires": [
             [
                 "f73184f0c320f3a8"
@@ -2193,8 +2349,8 @@
         "name": "",
         "collection": "objectpath",
         "operation": "find",
-        "x": 670,
-        "y": 280,
+        "x": 530,
+        "y": 560,
         "wires": [
             [
                 "461d3c7d0cf8eca4"
@@ -2212,8 +2368,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 280,
+        "x": 340,
+        "y": 560,
         "wires": [
             [
                 "8a540317ab0dca17"
@@ -2232,8 +2388,8 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 910,
-        "y": 280,
+        "x": 730,
+        "y": 560,
         "wires": []
     },
     {
@@ -2257,8 +2413,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 210,
-        "y": 340,
+        "x": 200,
+        "y": 380,
         "wires": [
             [
                 "c6085e354b348fe1"
@@ -2269,15 +2425,15 @@
         "id": "c6085e354b348fe1",
         "type": "function",
         "z": "251e28d43075d4af",
-        "name": "Older than 1 month",
+        "name": "Retnetion 1 month",
         "func": "msg.payload = {\n    timestamp: {\n        $lte: new Date().getTime() - (31 * 24 * 3660 * 1000)\n    }\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 420,
-        "y": 340,
+        "x": 430,
+        "y": 380,
         "wires": [
             [
                 "3a95e4e0d0961a70"
@@ -2295,9 +2451,354 @@
         "upsert": false,
         "multi": false,
         "operation": "delete",
-        "x": 680,
-        "y": 340,
+        "x": 690,
+        "y": 380,
         "wires": []
+    },
+    {
+        "id": "cdfb6fe6e69d04f8",
+        "type": "axis-device",
+        "z": "251e28d43075d4af",
+        "name": "",
+        "preset": "7b365f43103fb21e",
+        "action": "HTTP Get",
+        "cgi": "",
+        "data": "",
+        "options": "",
+        "filename": "",
+        "x": 680,
+        "y": 220,
+        "wires": [
+            [
+                "fd27a4e14e2383ca",
+                "f78c3333c5f8a2dd"
+            ]
+        ]
+    },
+    {
+        "id": "fd27a4e14e2383ca",
+        "type": "switch",
+        "z": "251e28d43075d4af",
+        "name": "Success",
+        "property": "error",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "false",
+                "vt": "jsonata"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 960,
+        "y": 220,
+        "wires": [
+            [
+                "8f0c4a6a1ed00e5e"
+            ]
+        ]
+    },
+    {
+        "id": "8f0c4a6a1ed00e5e",
+        "type": "mongodb out",
+        "z": "251e28d43075d4af",
+        "mongodb": "b12a9cc543227135",
+        "name": "",
+        "collection": "images",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 1160,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "dd02a9dcbbe6ef02",
+        "type": "inject",
+        "z": "251e28d43075d4af",
+        "name": "Every midnight",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "01 00 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 420,
+        "wires": [
+            [
+                "d043b32870525baf"
+            ]
+        ]
+    },
+    {
+        "id": "d043b32870525baf",
+        "type": "function",
+        "z": "251e28d43075d4af",
+        "name": "Retention 1 week",
+        "func": "msg.payload = {\n    timestamp: {\n        $lte: new Date().getTime() - (7 * 24 * 3660 * 1000)\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 420,
+        "wires": [
+            [
+                "2b5cebfa300dbffc"
+            ]
+        ]
+    },
+    {
+        "id": "2b5cebfa300dbffc",
+        "type": "mongodb out",
+        "z": "251e28d43075d4af",
+        "mongodb": "b12a9cc543227135",
+        "name": "",
+        "collection": "images",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "delete",
+        "x": 680,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "f78c3333c5f8a2dd",
+        "type": "switch",
+        "z": "251e28d43075d4af",
+        "name": "Error",
+        "property": "error",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "false",
+                "vt": "jsonata"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 950,
+        "y": 260,
+        "wires": [
+            [
+                "f7c29254a8794e29"
+            ]
+        ]
+    },
+    {
+        "id": "f7c29254a8794e29",
+        "type": "debug",
+        "z": "251e28d43075d4af",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1150,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "386792cd132eb940",
+        "type": "inject",
+        "z": "251e28d43075d4af",
+        "name": "List",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 600,
+        "wires": [
+            [
+                "fb848bd33d26b30c"
+            ]
+        ]
+    },
+    {
+        "id": "fb848bd33d26b30c",
+        "type": "function",
+        "z": "251e28d43075d4af",
+        "name": "Last hour",
+        "func": "msg.payload = {\n    timestamp: {\n        $gte: new Date().getTime() - (60 * 60 * 1000)\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 600,
+        "wires": [
+            [
+                "e65823ec8445776d"
+            ]
+        ]
+    },
+    {
+        "id": "e65823ec8445776d",
+        "type": "mongodb in",
+        "z": "251e28d43075d4af",
+        "mongodb": "b12a9cc543227135",
+        "name": "",
+        "collection": "images",
+        "operation": "find",
+        "x": 520,
+        "y": 600,
+        "wires": [
+            [
+                "d0acf96b6b854c30"
+            ]
+        ]
+    },
+    {
+        "id": "d0acf96b6b854c30",
+        "type": "debug",
+        "z": "251e28d43075d4af",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "01e13fcd0632f925",
+        "type": "change",
+        "z": "251e28d43075d4af",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "objectpath",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 710,
+        "y": 160,
+        "wires": [
+            [
+                "a54175dd50c5c748"
+            ]
+        ]
+    },
+    {
+        "id": "f323272c30e60592",
+        "type": "function",
+        "z": "251e28d43075d4af",
+        "name": "Camera filter",
+        "func": "if( msg.payload.device === \"ACCC8EF33E99\")\n    return;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 160,
+        "wires": [
+            [
+                "01e13fcd0632f925"
+            ]
+        ]
+    },
+    {
+        "id": "a54175dd50c5c748",
+        "type": "function",
+        "z": "251e28d43075d4af",
+        "name": "Find camera",
+        "func": "msg.payload = {\n    deviceID: msg.payload.device\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 160,
+        "wires": [
+            [
+                "2ec2d7bb15bebacf"
+            ]
+        ]
+    },
+    {
+        "id": "2ec2d7bb15bebacf",
+        "type": "mongodb in",
+        "z": "251e28d43075d4af",
+        "mongodb": "b12a9cc543227135",
+        "name": "",
+        "collection": "cameras",
+        "operation": "find",
+        "x": 1160,
+        "y": 160,
+        "wires": [
+            [
+                "1400797ee3d86dba"
+            ]
+        ]
+    },
+    {
+        "id": "1400797ee3d86dba",
+        "type": "function",
+        "z": "251e28d43075d4af",
+        "name": "get image",
+        "func": "if( msg.payload.length !== 1 )\n    return;\nmsg.camera = msg.payload[0];\nmsg.address = msg.camera.address;\nmsg.cgi = '/local/objectpath/path?image=' + msg.objectpath.id;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 220,
+        "wires": [
+            [
+                "cdfb6fe6e69d04f8"
+            ]
+        ]
     },
     {
         "id": "f4d4d2e68f58651f",
@@ -2326,8 +2827,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 230,
-        "y": 200,
+        "x": 240,
+        "y": 380,
         "wires": [
             [
                 "16196afcd0684f50"
@@ -2345,8 +2846,8 @@
         "output": "Base64",
         "filename": "",
         "options": "",
-        "x": 1010,
-        "y": 360,
+        "x": 1020,
+        "y": 540,
         "wires": [
             [
                 "89ef3f961bd6aafb"
@@ -2364,8 +2865,8 @@
         "output": "Base64",
         "filename": "",
         "options": "",
-        "x": 1370,
-        "y": 360,
+        "x": 1380,
+        "y": 540,
         "wires": [
             [
                 "cf1b1aec8f1bb214"
@@ -2378,8 +2879,8 @@
         "z": "28ebc073.75bf28",
         "name": "<-- Setup camera name and address",
         "info": "",
-        "x": 530,
-        "y": 200,
+        "x": 540,
+        "y": 380,
         "wires": []
     },
     {
@@ -2393,8 +2894,8 @@
         "data": "",
         "options": "",
         "filename": "",
-        "x": 470,
-        "y": 280,
+        "x": 480,
+        "y": 460,
         "wires": [
             [
                 "79e33cf8725a0bd3",
@@ -2413,8 +2914,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 810,
-        "y": 360,
+        "x": 820,
+        "y": 540,
         "wires": [
             [
                 "a6006e34179d2d40"
@@ -2438,8 +2939,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 650,
-        "y": 420,
+        "x": 660,
+        "y": 600,
         "wires": [
             [
                 "7a90710ea0a1c6b9"
@@ -2463,8 +2964,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 650,
-        "y": 360,
+        "x": 660,
+        "y": 540,
         "wires": [
             [
                 "6470d606df30ca9a"
@@ -2484,8 +2985,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 790,
-        "y": 420,
+        "x": 800,
+        "y": 600,
         "wires": []
     },
     {
@@ -2499,8 +3000,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1190,
-        "y": 360,
+        "x": 1200,
+        "y": 540,
         "wires": [
             [
                 "3b2992fba60190ac"
@@ -2518,8 +3019,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1550,
-        "y": 360,
+        "x": 1560,
+        "y": 540,
         "wires": [
             [
                 "5f0597919a6f7851"
@@ -2537,8 +3038,8 @@
         "upsert": true,
         "multi": false,
         "operation": "update",
-        "x": 1990,
-        "y": 360,
+        "x": 2000,
+        "y": 540,
         "wires": []
     },
     {
@@ -2552,8 +3053,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1760,
-        "y": 360,
+        "x": 1770,
+        "y": 540,
         "wires": [
             [
                 "2c5528b799c111f0"
@@ -2581,7 +3082,7 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 230,
+        "x": 220,
         "y": 60,
         "wires": [
             [
@@ -2627,8 +3128,8 @@
         "z": "28ebc073.75bf28",
         "name": "<-- Setup camera credentials under device",
         "info": "",
-        "x": 750,
-        "y": 280,
+        "x": 760,
+        "y": 460,
         "wires": []
     }
 ]
