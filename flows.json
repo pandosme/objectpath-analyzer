@@ -124,13 +124,6 @@
         "sessionExpiry": ""
     },
     {
-        "id": "12da2ddc0f24baae",
-        "type": "axis-preset",
-        "name": "",
-        "address": "camera",
-        "protocol": "http"
-    },
-    {
         "id": "481e5d94a9b5ab07",
         "type": "ui_base",
         "theme": {
