@@ -68,7 +68,7 @@
     {
         "id": "765edfe7b77b99a3",
         "type": "ui_tab",
-        "name": "Object paht analyzerPath analyze",
+        "name": "Path Analyzer",
         "icon": "dashboard",
         "order": 1,
         "disabled": false,
