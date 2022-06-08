@@ -196,16 +196,6 @@
         }
     },
     {
-        "id": "97c9c28b983171e1",
-        "type": "mongodb",
-        "hostname": "10.13.8.20",
-        "topology": "direct",
-        "connectOptions": "",
-        "port": "27017",
-        "db": "log",
-        "name": ""
-    },
-    {
         "id": "f1981c9fed6058c8",
         "type": "ui_tab",
         "name": "Cameras",
@@ -234,6 +224,39 @@
         "width": "12",
         "collapse": false,
         "className": ""
+    },
+    {
+        "id": "260e45057b94b302",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "10.13.8.20",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "0c3b4ea904d339eb",
+        "type": "axis-preset",
+        "name": "Cameras",
+        "address": "",
+        "protocol": "http"
     },
     {
         "id": "daa2daa3.3b2fb8",
@@ -515,7 +538,7 @@
         "z": "8e42a2bf.e54b8",
         "name": "",
         "group": "a36251364e32fe2d",
-        "order": 10,
+        "order": 12,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -562,7 +585,7 @@
         "z": "8e42a2bf.e54b8",
         "name": "",
         "group": "a36251364e32fe2d",
-        "order": 11,
+        "order": 13,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -818,8 +841,7 @@
         "y": 460,
         "wires": [
             [
-                "daa2daa3.3b2fb8",
-                "1727de701c9cd7c8"
+                "daa2daa3.3b2fb8"
             ]
         ]
     },
@@ -830,22 +852,6 @@
         "name": "image",
         "info": "",
         "x": 170,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "1727de701c9cd7c8",
-        "type": "debug",
-        "z": "8e42a2bf.e54b8",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 460,
         "y": 460,
         "wires": []
     },
@@ -1316,8 +1322,8 @@
         "topic": "",
         "topicType": "str",
         "className": "",
-        "x": 180,
-        "y": 240,
+        "x": 920,
+        "y": 180,
         "wires": [
             [
                 "d66f76110b06fe28"
@@ -1333,7 +1339,7 @@
         "tooltip": "",
         "place": "Select history",
         "group": "a36251364e32fe2d",
-        "order": 4,
+        "order": 2,
         "width": "0",
         "height": "0",
         "passthru": true,
@@ -1384,8 +1390,8 @@
         "topic": "",
         "topicType": "str",
         "className": "",
-        "x": 530,
-        "y": 400,
+        "x": 570,
+        "y": 240,
         "wires": [
             [
                 "47d6bf96173d6a64"
@@ -1411,10 +1417,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 730,
-        "y": 400,
+        "x": 770,
+        "y": 240,
         "wires": [
-            []
+            [
+                "364bd889c376c90a"
+            ]
         ]
     },
     {
@@ -1436,8 +1444,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 330,
-        "y": 400,
+        "x": 370,
+        "y": 240,
         "wires": [
             [
                 "4d20f2bc5d23592e"
@@ -1455,8 +1463,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 760,
-        "y": 240,
+        "x": 1500,
+        "y": 180,
         "wires": [
             [
                 "cb8071f882c3a4e9"
@@ -1470,7 +1478,7 @@
         "name": "Class",
         "label": "",
         "tooltip": "",
-        "place": "Class...",
+        "place": "Object type",
         "group": "a36251364e32fe2d",
         "order": 5,
         "width": "0",
@@ -1483,10 +1491,10 @@
         "topicType": "str",
         "className": "",
         "x": 530,
-        "y": 440,
+        "y": 460,
         "wires": [
             [
-                "eb69594a8e900eed"
+                "d8b559d975335327"
             ]
         ]
     },
@@ -1509,8 +1517,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 940,
-        "y": 440,
+        "x": 740,
+        "y": 460,
         "wires": [
             []
         ]
@@ -1539,14 +1547,14 @@
         "type": "function",
         "z": "e1d661b05780e560",
         "name": "Class",
-        "func": "msg.options = [\n    \"Any class\",\n    \"Person\",\n    \"Vehicle\",\n    \"Truck\",\n    \"Buss\"\n];\nmsg.payload = \"Any class\";\nreturn msg;",
+        "func": "msg.options = [\n    \"Person\",\n    \"Car\",\n    \"Truck\",\n    \"Buss\",\n    \"Vehicle\",\n    \"Head\",\n    \"Object\"\n];\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 330,
-        "y": 440,
+        "y": 460,
         "wires": [
             [
                 "f9c64213398892d2"
@@ -1559,7 +1567,7 @@
         "z": "e1d661b05780e560",
         "name": "Reset",
         "group": "a36251364e32fe2d",
-        "order": 3,
+        "order": 4,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -1574,11 +1582,10 @@
         "topic": "reset",
         "topicType": "str",
         "x": 170,
-        "y": 320,
+        "y": 400,
         "wires": [
             [
                 "841d0e21e44495a5",
-                "5a5233d0d08568d0",
                 "1c311b1a0084f407",
                 "ea12b3b15ac4a134",
                 "96b5eb6de24f0223",
@@ -1622,13 +1629,6 @@
                 "pt": "flow",
                 "to": "null",
                 "tot": "json"
-            },
-            {
-                "t": "set",
-                "p": "time",
-                "pt": "flow",
-                "to": "1",
-                "tot": "num"
             },
             {
                 "t": "set",
@@ -1686,29 +1686,10 @@
         "to": "",
         "reg": false,
         "x": 330,
-        "y": 320,
+        "y": 400,
         "wires": [
             [
                 "3bd482b9089e81c3"
-            ]
-        ]
-    },
-    {
-        "id": "eb69594a8e900eed",
-        "type": "function",
-        "z": "e1d661b05780e560",
-        "name": "If any class",
-        "func": "if( msg.payload === \"Any class\")\n    msg.payload = null;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 730,
-        "y": 440,
-        "wires": [
-            [
-                "d8b559d975335327"
             ]
         ]
     },
@@ -1732,7 +1713,7 @@
         "topicType": "str",
         "className": "",
         "x": 540,
-        "y": 500,
+        "y": 520,
         "wires": [
             [
                 "e080af8461578cf0"
@@ -1751,7 +1732,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 500,
+        "y": 520,
         "wires": [
             [
                 "a3b0e36778b94a0a"
@@ -1778,7 +1759,7 @@
         "to": "",
         "reg": false,
         "x": 1000,
-        "y": 500,
+        "y": 520,
         "wires": [
             []
         ]
@@ -1789,7 +1770,7 @@
         "z": "e1d661b05780e560",
         "name": "Show",
         "group": "a36251364e32fe2d",
-        "order": 12,
+        "order": 14,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -1804,7 +1785,7 @@
         "topic": "",
         "topicType": "str",
         "x": 190,
-        "y": 880,
+        "y": 960,
         "wires": [
             [
                 "36883f72319faee5"
@@ -1827,7 +1808,7 @@
             "cb5f057e3a19bd0c"
         ],
         "x": 445,
-        "y": 320,
+        "y": 400,
         "wires": []
     },
     {
@@ -1837,7 +1818,7 @@
         "name": "Reset",
         "info": "",
         "x": 530,
-        "y": 320,
+        "y": 400,
         "wires": []
     },
     {
@@ -1851,8 +1832,8 @@
             "cb5f057e3a19bd0c",
             "5c1757bec784e133"
         ],
-        "x": 1065,
-        "y": 240,
+        "x": 1805,
+        "y": 180,
         "wires": []
     },
     {
@@ -1861,8 +1842,8 @@
         "z": "e1d661b05780e560",
         "name": "Camera",
         "info": "",
-        "x": 1140,
-        "y": 240,
+        "x": 1880,
+        "y": 180,
         "wires": []
     },
     {
@@ -1877,7 +1858,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 880,
+        "y": 960,
         "wires": [
             [
                 "216e8ad289763859"
@@ -1894,7 +1875,7 @@
             "d76d397809a0bab9"
         ],
         "x": 735,
-        "y": 880,
+        "y": 960,
         "wires": []
     },
     {
@@ -1904,7 +1885,7 @@
         "name": "Paths",
         "info": "",
         "x": 810,
-        "y": 880,
+        "y": 960,
         "wires": []
     },
     {
@@ -1916,7 +1897,7 @@
         "tooltip": "",
         "place": "Vertical movement",
         "group": "a36251364e32fe2d",
-        "order": 8,
+        "order": 10,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -1938,7 +1919,7 @@
         "topicType": "str",
         "className": "",
         "x": 540,
-        "y": 740,
+        "y": 760,
         "wires": [
             [
                 "66423d2f980c052d"
@@ -1957,7 +1938,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 740,
+        "y": 760,
         "wires": [
             [
                 "668784cca1430363"
@@ -1984,7 +1965,7 @@
         "to": "",
         "reg": false,
         "x": 940,
-        "y": 740,
+        "y": 760,
         "wires": [
             []
         ]
@@ -1998,7 +1979,7 @@
         "tooltip": "",
         "place": "Horizontal movement",
         "group": "a36251364e32fe2d",
-        "order": 9,
+        "order": 11,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -2020,7 +2001,7 @@
         "topicType": "str",
         "className": "",
         "x": 550,
-        "y": 780,
+        "y": 800,
         "wires": [
             [
                 "ee03b45d134803b8"
@@ -2039,7 +2020,7 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 780,
+        "y": 800,
         "wires": [
             [
                 "0d79c41f78842c0f"
@@ -2066,7 +2047,7 @@
         "to": "",
         "reg": false,
         "x": 750,
-        "y": 780,
+        "y": 800,
         "wires": [
             []
         ]
@@ -2090,11 +2071,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 940,
-        "y": 240,
+        "x": 1680,
+        "y": 180,
         "wires": [
             [
-                "0c56474b6222ab1b"
+                "0c56474b6222ab1b",
+                "c7ab435c0734a51d"
             ]
         ]
     },
@@ -2107,11 +2089,10 @@
         "collection": "objectpath",
         "operation": "find",
         "x": 570,
-        "y": 880,
+        "y": 960,
         "wires": [
             [
-                "d5e5d4deb367ce9a",
-                "0d0868406e2bf0dd"
+                "d5e5d4deb367ce9a"
             ]
         ]
     },
@@ -2142,8 +2123,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 240,
+        "x": 1090,
+        "y": 180,
         "wires": [
             [
                 "92017f0c31a1c52b"
@@ -2158,8 +2139,8 @@
         "name": "",
         "collection": "cameras",
         "operation": "find",
-        "x": 550,
-        "y": 240,
+        "x": 1290,
+        "y": 180,
         "wires": [
             [
                 "8c89a84efc013ed0"
@@ -2172,7 +2153,7 @@
         "z": "e1d661b05780e560",
         "group": "a36251364e32fe2d",
         "name": "Empty space",
-        "order": 2,
+        "order": 3,
         "width": 0,
         "height": 0,
         "format": "<div ng-bind-html=\"msg.payload\"></div>",
@@ -2182,7 +2163,7 @@
         "templateScope": "local",
         "className": "",
         "x": 200,
-        "y": 280,
+        "y": 360,
         "wires": [
             []
         ]
@@ -2191,7 +2172,7 @@
         "id": "e0f8a19ee92ac249",
         "type": "inject",
         "z": "e1d661b05780e560",
-        "name": "",
+        "name": "On boot",
         "props": [
             {
                 "p": "payload"
@@ -2203,13 +2184,13 @@
         ],
         "repeat": "",
         "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
+        "once": true,
+        "onceDelay": "5",
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 330,
-        "y": 100,
+        "x": 340,
+        "y": 140,
         "wires": [
             [
                 "5702a3d1c5db8588"
@@ -2260,102 +2241,6 @@
         ]
     },
     {
-        "id": "0d0868406e2bf0dd",
-        "type": "debug",
-        "z": "e1d661b05780e560",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 800,
-        "y": 940,
-        "wires": []
-    },
-    {
-        "id": "1bfc1978f5408dc0",
-        "type": "mongodb in",
-        "z": "e1d661b05780e560",
-        "mongodb": "b12a9cc543227135",
-        "name": "",
-        "collection": "objectpath",
-        "operation": "find",
-        "x": 570,
-        "y": 1020,
-        "wires": [
-            [
-                "24c3908b5f627587"
-            ]
-        ]
-    },
-    {
-        "id": "5c294135e8bd1291",
-        "type": "inject",
-        "z": "e1d661b05780e560",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 200,
-        "y": 1020,
-        "wires": [
-            [
-                "1c75977de6b4fed1"
-            ]
-        ]
-    },
-    {
-        "id": "1c75977de6b4fed1",
-        "type": "function",
-        "z": "e1d661b05780e560",
-        "name": "",
-        "func": "msg.payload = {\n    device: \"ACCC8EF33E99\",\n    timestamp: {\n        $gte: new Date().getTime() - (2 * 24 * 3600 * 1000)\n    }\n}\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 1020,
-        "wires": [
-            [
-                "1bfc1978f5408dc0"
-            ]
-        ]
-    },
-    {
-        "id": "24c3908b5f627587",
-        "type": "debug",
-        "z": "e1d661b05780e560",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 900,
-        "y": 1020,
-        "wires": []
-    },
-    {
         "id": "70e98831122ecba3",
         "type": "function",
         "z": "e1d661b05780e560",
@@ -2367,7 +2252,7 @@
         "finalize": "",
         "libs": [],
         "x": 350,
-        "y": 620,
+        "y": 640,
         "wires": [
             [
                 "c913e50931da34e4"
@@ -2383,7 +2268,7 @@
         "tooltip": "",
         "place": "Minimum distance",
         "group": "a36251364e32fe2d",
-        "order": 7,
+        "order": 8,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -2394,7 +2279,7 @@
         "topicType": "str",
         "className": "",
         "x": 570,
-        "y": 620,
+        "y": 640,
         "wires": [
             [
                 "35e840e963208748"
@@ -2421,7 +2306,7 @@
         "to": "",
         "reg": false,
         "x": 1000,
-        "y": 620,
+        "y": 640,
         "wires": [
             []
         ]
@@ -2438,7 +2323,7 @@
         "finalize": "",
         "libs": [],
         "x": 770,
-        "y": 620,
+        "y": 640,
         "wires": [
             [
                 "e1330c01fa80be51"
@@ -2457,7 +2342,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 660,
+        "y": 680,
         "wires": [
             [
                 "56e2e71e8b40aa7a"
@@ -2473,7 +2358,7 @@
         "tooltip": "",
         "place": "Maximum Distance",
         "group": "a36251364e32fe2d",
-        "order": 7,
+        "order": 9,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -2484,7 +2369,7 @@
         "topicType": "str",
         "className": "",
         "x": 570,
-        "y": 660,
+        "y": 680,
         "wires": [
             [
                 "2f050aeeb12dfa7b"
@@ -2503,7 +2388,7 @@
         "finalize": "",
         "libs": [],
         "x": 770,
-        "y": 660,
+        "y": 680,
         "wires": [
             [
                 "bd244c9b8fb7c47d"
@@ -2530,7 +2415,7 @@
         "to": "",
         "reg": false,
         "x": 1000,
-        "y": 660,
+        "y": 680,
         "wires": [
             []
         ]
@@ -2544,7 +2429,7 @@
         "tooltip": "",
         "place": "Maximum age",
         "group": "a36251364e32fe2d",
-        "order": 6,
+        "order": 7,
         "width": "0",
         "height": "0",
         "passthru": false,
@@ -2555,7 +2440,7 @@
         "topicType": "str",
         "className": "",
         "x": 540,
-        "y": 540,
+        "y": 560,
         "wires": [
             [
                 "d88ef99ea77dd7ab"
@@ -2582,7 +2467,7 @@
         "to": "",
         "reg": false,
         "x": 1010,
-        "y": 540,
+        "y": 560,
         "wires": [
             []
         ]
@@ -2599,7 +2484,7 @@
         "finalize": "",
         "libs": [],
         "x": 770,
-        "y": 500,
+        "y": 520,
         "wires": [
             [
                 "8495f137245b902c"
@@ -2618,7 +2503,7 @@
         "finalize": "",
         "libs": [],
         "x": 770,
-        "y": 540,
+        "y": 560,
         "wires": [
             [
                 "cc419da0168d1260"
@@ -2637,12 +2522,111 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 540,
+        "y": 560,
         "wires": [
             [
                 "e9f4609ecc47020b"
             ]
         ]
+    },
+    {
+        "id": "af1b835de62ff933",
+        "type": "inject",
+        "z": "e1d661b05780e560",
+        "name": "On boot",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 220,
+        "y": 240,
+        "wires": [
+            [
+                "5a5233d0d08568d0"
+            ]
+        ]
+    },
+    {
+        "id": "d7f8d78d063b714e",
+        "type": "link in",
+        "z": "e1d661b05780e560",
+        "name": "",
+        "links": [
+            "c7ab435c0734a51d"
+        ],
+        "x": 225,
+        "y": 1000,
+        "wires": [
+            [
+                "36883f72319faee5"
+            ]
+        ]
+    },
+    {
+        "id": "c7ab435c0734a51d",
+        "type": "link out",
+        "z": "e1d661b05780e560",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "d7f8d78d063b714e"
+        ],
+        "x": 1805,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "364bd889c376c90a",
+        "type": "link out",
+        "z": "e1d661b05780e560",
+        "name": "",
+        "mode": "link",
+        "links": [],
+        "x": 895,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "bcc9b1262099e2f4",
+        "type": "comment",
+        "z": "e1d661b05780e560",
+        "name": "Query",
+        "info": "",
+        "x": 150,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "15954c926c8a592a",
+        "type": "comment",
+        "z": "e1d661b05780e560",
+        "name": "Query",
+        "info": "",
+        "x": 1890,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "9b22d99865cbfc7e",
+        "type": "comment",
+        "z": "e1d661b05780e560",
+        "name": "Query",
+        "info": "",
+        "x": 970,
+        "y": 240,
+        "wires": []
     },
     {
         "id": "48d08537b75a1ff1",
@@ -2652,7 +2636,7 @@
         "topic": "objectpath/detection/#",
         "qos": "2",
         "datatype": "json",
-        "broker": "",
+        "broker": "260e45057b94b302",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -2829,7 +2813,7 @@
         "type": "axis-device",
         "z": "251e28d43075d4af",
         "name": "",
-        "preset": "",
+        "preset": "0c3b4ea904d339eb",
         "action": "HTTP Get",
         "cgi": "",
         "data": "",
@@ -2841,8 +2825,7 @@
             [
                 "fd27a4e14e2383ca",
                 "f78c3333c5f8a2dd"
-            ],
-            []
+            ]
         ]
     },
     {
@@ -3175,7 +3158,7 @@
         "type": "axis-camera",
         "z": "28ebc073.75bf28",
         "name": "",
-        "preset": "",
+        "preset": "0c3b4ea904d339eb",
         "action": "Camera Info",
         "resolution": "640x360",
         "output": "Base64",
@@ -3186,8 +3169,7 @@
         "wires": [
             [
                 "89ef3f961bd6aafb"
-            ],
-            []
+            ]
         ]
     },
     {
@@ -3195,7 +3177,7 @@
         "type": "axis-camera",
         "z": "28ebc073.75bf28",
         "name": "",
-        "preset": "",
+        "preset": "0c3b4ea904d339eb",
         "action": "JPEG Image",
         "resolution": "640x360",
         "output": "Base64",
@@ -3206,8 +3188,7 @@
         "wires": [
             [
                 "cf1b1aec8f1bb214"
-            ],
-            []
+            ]
         ]
     },
     {
@@ -3215,7 +3196,7 @@
         "type": "axis-device",
         "z": "28ebc073.75bf28",
         "name": "",
-        "preset": "",
+        "preset": "0c3b4ea904d339eb",
         "action": "Device Info",
         "cgi": "",
         "data": "",
@@ -3227,8 +3208,7 @@
             [
                 "79e33cf8725a0bd3",
                 "d6fd434ce037d2c3"
-            ],
-            []
+            ]
         ]
     },
     {
@@ -3668,22 +3648,6 @@
         "wires": []
     },
     {
-        "id": "392404dade8ade84",
-        "type": "debug",
-        "z": "28ebc073.75bf28",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 640,
-        "y": 540,
-        "wires": []
-    },
-    {
         "id": "768ca9b59c38c7c3",
         "type": "mqtt in",
         "z": "136ec2e31eae94eb",
@@ -3691,7 +3655,7 @@
         "topic": "objectpath/detection/#",
         "qos": "2",
         "datatype": "json",
-        "broker": "",
+        "broker": "260e45057b94b302",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -3709,7 +3673,7 @@
         "type": "axis-device",
         "z": "136ec2e31eae94eb",
         "name": "",
-        "preset": "",
+        "preset": "0c3b4ea904d339eb",
         "action": "HTTP Get",
         "cgi": "",
         "data": "",
@@ -3721,8 +3685,7 @@
             [
                 "95343f7c8fd5b539",
                 "aaf6af7486ae7adf"
-            ],
-            []
+            ]
         ]
     },
     {
