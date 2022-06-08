@@ -46,13 +46,6 @@
         "env": []
     },
     {
-        "id": "7b365f43103fb21e",
-        "type": "axis-preset",
-        "name": "Default",
-        "address": "",
-        "protocol": "http"
-    },
-    {
         "id": "b12a9cc543227135",
         "type": "mongodb",
         "hostname": "mongodb",
@@ -103,33 +96,6 @@
         "width": "12",
         "collapse": false,
         "className": ""
-    },
-    {
-        "id": "31faac7d.51f8e4",
-        "type": "mqtt-broker",
-        "name": "Broker",
-        "broker": "10.13.8.20",
-        "port": "1883",
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "compatmode": false,
-        "protocolVersion": "4",
-        "keepalive": "60",
-        "cleansession": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willPayload": "",
-        "willMsg": {},
-        "sessionExpiry": ""
     },
     {
         "id": "481e5d94a9b5ab07",
@@ -2686,7 +2652,7 @@
         "topic": "objectpath/detection/#",
         "qos": "2",
         "datatype": "json",
-        "broker": "31faac7d.51f8e4",
+        "broker": "",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -2863,7 +2829,7 @@
         "type": "axis-device",
         "z": "251e28d43075d4af",
         "name": "",
-        "preset": "7b365f43103fb21e",
+        "preset": "",
         "action": "HTTP Get",
         "cgi": "",
         "data": "",
@@ -2875,7 +2841,8 @@
             [
                 "fd27a4e14e2383ca",
                 "f78c3333c5f8a2dd"
-            ]
+            ],
+            []
         ]
     },
     {
@@ -3208,7 +3175,7 @@
         "type": "axis-camera",
         "z": "28ebc073.75bf28",
         "name": "",
-        "preset": "7b365f43103fb21e",
+        "preset": "",
         "action": "Camera Info",
         "resolution": "640x360",
         "output": "Base64",
@@ -3219,7 +3186,8 @@
         "wires": [
             [
                 "89ef3f961bd6aafb"
-            ]
+            ],
+            []
         ]
     },
     {
@@ -3227,7 +3195,7 @@
         "type": "axis-camera",
         "z": "28ebc073.75bf28",
         "name": "",
-        "preset": "7b365f43103fb21e",
+        "preset": "",
         "action": "JPEG Image",
         "resolution": "640x360",
         "output": "Base64",
@@ -3238,7 +3206,8 @@
         "wires": [
             [
                 "cf1b1aec8f1bb214"
-            ]
+            ],
+            []
         ]
     },
     {
@@ -3246,7 +3215,7 @@
         "type": "axis-device",
         "z": "28ebc073.75bf28",
         "name": "",
-        "preset": "7b365f43103fb21e",
+        "preset": "",
         "action": "Device Info",
         "cgi": "",
         "data": "",
@@ -3258,7 +3227,8 @@
             [
                 "79e33cf8725a0bd3",
                 "d6fd434ce037d2c3"
-            ]
+            ],
+            []
         ]
     },
     {
@@ -3721,7 +3691,7 @@
         "topic": "objectpath/detection/#",
         "qos": "2",
         "datatype": "json",
-        "broker": "31faac7d.51f8e4",
+        "broker": "",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -3739,7 +3709,7 @@
         "type": "axis-device",
         "z": "136ec2e31eae94eb",
         "name": "",
-        "preset": "7b365f43103fb21e",
+        "preset": "",
         "action": "HTTP Get",
         "cgi": "",
         "data": "",
@@ -3751,7 +3721,8 @@
             [
                 "95343f7c8fd5b539",
                 "aaf6af7486ae7adf"
-            ]
+            ],
+            []
         ]
     },
     {
