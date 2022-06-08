@@ -25,7 +25,7 @@
     {
         "id": "251e28d43075d4af",
         "type": "tab",
-        "label": "objectpath",
+        "label": "objectpath data input",
         "disabled": false,
         "info": "",
         "env": []
@@ -2564,9 +2564,10 @@
         "z": "e1d661b05780e560",
         "name": "",
         "links": [
-            "c7ab435c0734a51d"
+            "c7ab435c0734a51d",
+            "364bd889c376c90a"
         ],
-        "x": 225,
+        "x": 245,
         "y": 1000,
         "wires": [
             [
@@ -2593,7 +2594,9 @@
         "z": "e1d661b05780e560",
         "name": "",
         "mode": "link",
-        "links": [],
+        "links": [
+            "d7f8d78d063b714e"
+        ],
         "x": 895,
         "y": 240,
         "wires": []
@@ -2604,7 +2607,7 @@
         "z": "e1d661b05780e560",
         "name": "Query",
         "info": "",
-        "x": 150,
+        "x": 190,
         "y": 1000,
         "wires": []
     },
@@ -2645,8 +2648,7 @@
         "y": 100,
         "wires": [
             [
-                "b2920347a89cd63e",
-                "f323272c30e60592"
+                "b2920347a89cd63e"
             ]
         ]
     },
@@ -2663,86 +2665,6 @@
         "operation": "insert",
         "x": 510,
         "y": 100,
-        "wires": []
-    },
-    {
-        "id": "f1d2f05086bc47a8",
-        "type": "inject",
-        "z": "251e28d43075d4af",
-        "name": "List",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 170,
-        "y": 560,
-        "wires": [
-            [
-                "f73184f0c320f3a8"
-            ]
-        ]
-    },
-    {
-        "id": "8a540317ab0dca17",
-        "type": "mongodb in",
-        "z": "251e28d43075d4af",
-        "mongodb": "b12a9cc543227135",
-        "name": "",
-        "collection": "objectpath",
-        "operation": "find",
-        "x": 530,
-        "y": 560,
-        "wires": [
-            [
-                "461d3c7d0cf8eca4"
-            ]
-        ]
-    },
-    {
-        "id": "f73184f0c320f3a8",
-        "type": "function",
-        "z": "251e28d43075d4af",
-        "name": "Last hour",
-        "func": "msg.payload = {\n    timestamp: {\n        $gte: new Date().getTime() - (60 * 60 * 1000)\n    }\n}\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 340,
-        "y": 560,
-        "wires": [
-            [
-                "8a540317ab0dca17"
-            ]
-        ]
-    },
-    {
-        "id": "461d3c7d0cf8eca4",
-        "type": "debug",
-        "z": "251e28d43075d4af",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 730,
-        "y": 560,
         "wires": []
     },
     {
@@ -2766,8 +2688,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 200,
-        "y": 380,
+        "x": 210,
+        "y": 160,
         "wires": [
             [
                 "c6085e354b348fe1"
@@ -2785,8 +2707,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 440,
-        "y": 380,
+        "x": 450,
+        "y": 160,
         "wires": [
             [
                 "3a95e4e0d0961a70"
@@ -2804,68 +2726,8 @@
         "upsert": false,
         "multi": false,
         "operation": "delete",
-        "x": 690,
-        "y": 380,
-        "wires": []
-    },
-    {
-        "id": "cdfb6fe6e69d04f8",
-        "type": "axis-device",
-        "z": "251e28d43075d4af",
-        "name": "",
-        "preset": "0c3b4ea904d339eb",
-        "action": "HTTP Get",
-        "cgi": "",
-        "data": "",
-        "options": "",
-        "filename": "",
-        "x": 680,
-        "y": 220,
-        "wires": [
-            [
-                "fd27a4e14e2383ca",
-                "f78c3333c5f8a2dd"
-            ]
-        ]
-    },
-    {
-        "id": "fd27a4e14e2383ca",
-        "type": "switch",
-        "z": "251e28d43075d4af",
-        "name": "Success",
-        "property": "error",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "false",
-                "vt": "jsonata"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 1,
-        "x": 960,
-        "y": 220,
-        "wires": [
-            [
-                "8f0c4a6a1ed00e5e"
-            ]
-        ]
-    },
-    {
-        "id": "8f0c4a6a1ed00e5e",
-        "type": "mongodb out",
-        "z": "251e28d43075d4af",
-        "mongodb": "b12a9cc543227135",
-        "name": "",
-        "collection": "images",
-        "payonly": true,
-        "upsert": false,
-        "multi": false,
-        "operation": "insert",
-        "x": 1160,
-        "y": 220,
+        "x": 700,
+        "y": 160,
         "wires": []
     },
     {
@@ -2889,8 +2751,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 200,
-        "y": 420,
+        "x": 210,
+        "y": 200,
         "wires": [
             [
                 "d043b32870525baf"
@@ -2908,8 +2770,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 430,
-        "y": 420,
+        "x": 440,
+        "y": 200,
         "wires": [
             [
                 "2b5cebfa300dbffc"
@@ -2927,231 +2789,9 @@
         "upsert": false,
         "multi": false,
         "operation": "delete",
-        "x": 680,
-        "y": 420,
+        "x": 690,
+        "y": 200,
         "wires": []
-    },
-    {
-        "id": "f78c3333c5f8a2dd",
-        "type": "switch",
-        "z": "251e28d43075d4af",
-        "name": "Error",
-        "property": "error",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "neq",
-                "v": "false",
-                "vt": "jsonata"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 1,
-        "x": 950,
-        "y": 260,
-        "wires": [
-            [
-                "f7c29254a8794e29"
-            ]
-        ]
-    },
-    {
-        "id": "f7c29254a8794e29",
-        "type": "debug",
-        "z": "251e28d43075d4af",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1150,
-        "y": 260,
-        "wires": []
-    },
-    {
-        "id": "386792cd132eb940",
-        "type": "inject",
-        "z": "251e28d43075d4af",
-        "name": "List",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 170,
-        "y": 600,
-        "wires": [
-            [
-                "fb848bd33d26b30c"
-            ]
-        ]
-    },
-    {
-        "id": "fb848bd33d26b30c",
-        "type": "function",
-        "z": "251e28d43075d4af",
-        "name": "Last hour",
-        "func": "msg.payload = {\n    timestamp: {\n        $gte: new Date().getTime() - (60 * 60 * 1000)\n    }\n}\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 340,
-        "y": 600,
-        "wires": [
-            [
-                "e65823ec8445776d"
-            ]
-        ]
-    },
-    {
-        "id": "e65823ec8445776d",
-        "type": "mongodb in",
-        "z": "251e28d43075d4af",
-        "mongodb": "b12a9cc543227135",
-        "name": "",
-        "collection": "images",
-        "operation": "find",
-        "x": 520,
-        "y": 600,
-        "wires": [
-            [
-                "d0acf96b6b854c30"
-            ]
-        ]
-    },
-    {
-        "id": "d0acf96b6b854c30",
-        "type": "debug",
-        "z": "251e28d43075d4af",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 730,
-        "y": 600,
-        "wires": []
-    },
-    {
-        "id": "01e13fcd0632f925",
-        "type": "change",
-        "z": "251e28d43075d4af",
-        "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "objectpath",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 710,
-        "y": 160,
-        "wires": [
-            [
-                "a54175dd50c5c748"
-            ]
-        ]
-    },
-    {
-        "id": "f323272c30e60592",
-        "type": "function",
-        "z": "251e28d43075d4af",
-        "name": "Camera filter",
-        "func": "if( msg.payload.device === \"ACCC8EF33E99\")\n    return;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 490,
-        "y": 160,
-        "wires": [
-            [
-                "01e13fcd0632f925"
-            ]
-        ]
-    },
-    {
-        "id": "a54175dd50c5c748",
-        "type": "function",
-        "z": "251e28d43075d4af",
-        "name": "Find camera",
-        "func": "msg.payload = {\n    deviceID: msg.payload.device\n}\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 970,
-        "y": 160,
-        "wires": [
-            [
-                "2ec2d7bb15bebacf"
-            ]
-        ]
-    },
-    {
-        "id": "2ec2d7bb15bebacf",
-        "type": "mongodb in",
-        "z": "251e28d43075d4af",
-        "mongodb": "b12a9cc543227135",
-        "name": "",
-        "collection": "cameras",
-        "operation": "find",
-        "x": 1160,
-        "y": 160,
-        "wires": [
-            [
-                "1400797ee3d86dba"
-            ]
-        ]
-    },
-    {
-        "id": "1400797ee3d86dba",
-        "type": "function",
-        "z": "251e28d43075d4af",
-        "name": "get image",
-        "func": "if( msg.payload.length !== 1 )\n    return;\nmsg.camera = msg.payload[0];\nmsg.address = msg.camera.address;\nmsg.cgi = '/local/objectpath/path?image=' + msg.objectpath.id;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 490,
-        "y": 220,
-        "wires": [
-            [
-                "cdfb6fe6e69d04f8"
-            ]
-        ]
     },
     {
         "id": "a6006e34179d2d40",
@@ -3709,7 +3349,8 @@
         "y": 220,
         "wires": [
             [
-                "c049183ad3632202"
+                "c049183ad3632202",
+                "8e5fee2fb6fe3acc"
             ]
         ]
     },
@@ -3748,27 +3389,8 @@
         "x": 940,
         "y": 260,
         "wires": [
-            [
-                "eaa65f434b605715"
-            ]
+            []
         ]
-    },
-    {
-        "id": "eaa65f434b605715",
-        "type": "debug",
-        "z": "136ec2e31eae94eb",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1140,
-        "y": 260,
-        "wires": []
     },
     {
         "id": "3dbc471162db0254",
@@ -3879,5 +3501,22 @@
         "x": 350,
         "y": 100,
         "wires": []
+    },
+    {
+        "id": "8e5fee2fb6fe3acc",
+        "type": "function",
+        "z": "136ec2e31eae94eb",
+        "name": "",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 300,
+        "wires": [
+            []
+        ]
     }
 ]
