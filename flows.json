@@ -334,7 +334,7 @@
         "templateScope": "local",
         "className": "",
         "x": 620,
-        "y": 340,
+        "y": 200,
         "wires": [
             [
                 "35a0d50b.e9c2d2"
@@ -353,7 +353,7 @@
         "finalize": "",
         "libs": [],
         "x": 830,
-        "y": 340,
+        "y": 200,
         "wires": []
     },
     {
@@ -544,7 +544,7 @@
         "name": "Camera",
         "info": "",
         "x": 170,
-        "y": 340,
+        "y": 200,
         "wires": []
     },
     {
@@ -553,11 +553,10 @@
         "z": "8e42a2bf.e54b8",
         "name": "",
         "links": [
-            "0c56474b6222ab1b",
-            "b63654d926b2c101"
+            "0c56474b6222ab1b"
         ],
         "x": 285,
-        "y": 340,
+        "y": 200,
         "wires": [
             [
                 "daa2daa3.3b2fb8"
@@ -575,7 +574,7 @@
             "72534bcb5e75607f"
         ],
         "x": 285,
-        "y": 380,
+        "y": 240,
         "wires": [
             [
                 "daa2daa3.3b2fb8"
@@ -589,102 +588,8 @@
         "name": "Paths",
         "info": "",
         "x": 170,
-        "y": 380,
+        "y": 240,
         "wires": []
-    },
-    {
-        "id": "a4ecf8685923ddb8",
-        "type": "ui_button",
-        "z": "8e42a2bf.e54b8",
-        "name": "",
-        "group": "f3d9db3167cf7416",
-        "order": 8,
-        "width": "0",
-        "height": "0",
-        "passthru": false,
-        "label": "Birth",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "picture_in_picture",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "",
-        "topicType": "str",
-        "x": 610,
-        "y": 380,
-        "wires": [
-            [
-                "941e52e5b6735510"
-            ]
-        ]
-    },
-    {
-        "id": "941e52e5b6735510",
-        "type": "function",
-        "z": "8e42a2bf.e54b8",
-        "name": "flow.birth",
-        "func": "area = flow.get(\"birth\");\n\nif( !area )\n    area = {\n        x1: 250,\n        x2: 750,\n        y1: 250,\n        y2: 750\n    };\n\nflow.set(\"birth\",area);\n\nmsg.topic = \"birth\";\nmsg.payload = area;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 780,
-        "y": 380,
-        "wires": [
-            [
-                "b63654d926b2c101"
-            ]
-        ]
-    },
-    {
-        "id": "304eb7616e9b58cc",
-        "type": "ui_button",
-        "z": "8e42a2bf.e54b8",
-        "name": "",
-        "group": "f3d9db3167cf7416",
-        "order": 9,
-        "width": "0",
-        "height": "0",
-        "passthru": false,
-        "label": "Death",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "picture_in_picture_alt",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "",
-        "topicType": "str",
-        "x": 610,
-        "y": 420,
-        "wires": [
-            [
-                "f71720c951dca45c"
-            ]
-        ]
-    },
-    {
-        "id": "f71720c951dca45c",
-        "type": "function",
-        "z": "8e42a2bf.e54b8",
-        "name": "flow.death",
-        "func": "area = flow.get(\"death\");\n\nif( !area )\n    area = {\n        x1: 250,\n        x2: 750,\n        y1: 250,\n        y2: 750\n    };\n\nflow.set(\"death\",area);\n\nmsg.topic = \"death\";\nmsg.payload = area;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 790,
-        "y": 420,
-        "wires": [
-            [
-                "b63654d926b2c101"
-            ]
-        ]
     },
     {
         "id": "f1685b5b0e483973",
@@ -698,7 +603,7 @@
             "3f44c8a1ac857f89"
         ],
         "x": 285,
-        "y": 300,
+        "y": 440,
         "wires": [
             [
                 "743c2f07d2992fbb"
@@ -712,7 +617,7 @@
         "name": "Reset filters",
         "info": "",
         "x": 190,
-        "y": 300,
+        "y": 440,
         "wires": []
     },
     {
@@ -749,7 +654,7 @@
         "to": "",
         "reg": false,
         "x": 420,
-        "y": 300,
+        "y": 440,
         "wires": [
             [
                 "daa2daa3.3b2fb8"
@@ -803,7 +708,7 @@
             "73ceda1a4bf104c4"
         ],
         "x": 285,
-        "y": 420,
+        "y": 280,
         "wires": [
             [
                 "daa2daa3.3b2fb8"
@@ -817,7 +722,7 @@
         "name": "Transperancy",
         "info": "",
         "x": 190,
-        "y": 420,
+        "y": 280,
         "wires": []
     },
     {
@@ -841,29 +746,6 @@
         "info": "",
         "x": 650,
         "y": 600,
-        "wires": []
-    },
-    {
-        "id": "b63654d926b2c101",
-        "type": "link out",
-        "z": "8e42a2bf.e54b8",
-        "name": "",
-        "mode": "link",
-        "links": [
-            "484c227410fafc31"
-        ],
-        "x": 985,
-        "y": 380,
-        "wires": []
-    },
-    {
-        "id": "a24a72a081d7f3c6",
-        "type": "comment",
-        "z": "8e42a2bf.e54b8",
-        "name": "Data",
-        "info": "",
-        "x": 1050,
-        "y": 380,
         "wires": []
     },
     {
@@ -902,7 +784,7 @@
             "f176d46fa40bd346"
         ],
         "x": 285,
-        "y": 460,
+        "y": 320,
         "wires": [
             [
                 "daa2daa3.3b2fb8"
@@ -916,7 +798,7 @@
         "name": "image",
         "info": "",
         "x": 170,
-        "y": 460,
+        "y": 320,
         "wires": []
     },
     {
@@ -940,7 +822,7 @@
             "3f44c8a1ac857f89"
         ],
         "x": 285,
-        "y": 260,
+        "y": 400,
         "wires": [
             [
                 "4956368b157301e3"
@@ -967,7 +849,7 @@
         "to": "",
         "reg": false,
         "x": 430,
-        "y": 260,
+        "y": 400,
         "wires": [
             [
                 "daa2daa3.3b2fb8"
@@ -981,7 +863,34 @@
         "name": "Reset camera",
         "info": "",
         "x": 190,
-        "y": 260,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "7f11d7b47e01f853",
+        "type": "link in",
+        "z": "8e42a2bf.e54b8",
+        "name": "",
+        "links": [
+            "b63654d926b2c101",
+            "cf47677bc668681e"
+        ],
+        "x": 285,
+        "y": 360,
+        "wires": [
+            [
+                "daa2daa3.3b2fb8"
+            ]
+        ]
+    },
+    {
+        "id": "5ff1e097145d1a67",
+        "type": "comment",
+        "z": "8e42a2bf.e54b8",
+        "name": "Birth/Death",
+        "info": "",
+        "x": 180,
+        "y": 360,
         "wires": []
     },
     {
@@ -2974,6 +2883,123 @@
                 "25552d9f2629a89e"
             ]
         ]
+    },
+    {
+        "id": "6d29a9bde9f44767",
+        "type": "ui_button",
+        "z": "e1d661b05780e560",
+        "name": "",
+        "group": "f3d9db3167cf7416",
+        "order": 8,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "label": "Birth",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "picture_in_picture",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 190,
+        "y": 720,
+        "wires": [
+            [
+                "b82eda8fdd753c48"
+            ]
+        ]
+    },
+    {
+        "id": "b82eda8fdd753c48",
+        "type": "function",
+        "z": "e1d661b05780e560",
+        "name": "flow.birth",
+        "func": "area = flow.get(\"birth\");\n\nif( !area )\n    area = {\n        x1: 250,\n        x2: 750,\n        y1: 250,\n        y2: 750\n    };\n\nflow.set(\"birth\",area);\n\nmsg.topic = \"birth\";\nmsg.payload = area;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 720,
+        "wires": [
+            [
+                "cf47677bc668681e"
+            ]
+        ]
+    },
+    {
+        "id": "ceca68bc6d5779c9",
+        "type": "ui_button",
+        "z": "e1d661b05780e560",
+        "name": "",
+        "group": "f3d9db3167cf7416",
+        "order": 9,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "label": "Death",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "picture_in_picture_alt",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 190,
+        "y": 760,
+        "wires": [
+            [
+                "88dc4aadbaae12d5"
+            ]
+        ]
+    },
+    {
+        "id": "88dc4aadbaae12d5",
+        "type": "function",
+        "z": "e1d661b05780e560",
+        "name": "flow.death",
+        "func": "area = flow.get(\"death\");\n\nif( !area )\n    area = {\n        x1: 250,\n        x2: 750,\n        y1: 250,\n        y2: 750\n    };\n\nflow.set(\"death\",area);\n\nmsg.topic = \"death\";\nmsg.payload = area;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 760,
+        "wires": [
+            [
+                "cf47677bc668681e"
+            ]
+        ]
+    },
+    {
+        "id": "cf47677bc668681e",
+        "type": "link out",
+        "z": "e1d661b05780e560",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "7f11d7b47e01f853"
+        ],
+        "x": 565,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "d331a9b16f078ba1",
+        "type": "comment",
+        "z": "e1d661b05780e560",
+        "name": "Birth/Death",
+        "info": "",
+        "x": 640,
+        "y": 720,
+        "wires": []
     },
     {
         "id": "48d08537b75a1ff1",
