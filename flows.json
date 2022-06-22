@@ -56,7 +56,7 @@
     {
         "id": "b12a9cc543227135",
         "type": "mongodb",
-        "hostname": "10.13.8.92",
+        "hostname": "mongodb",
         "topology": "direct",
         "connectOptions": "",
         "port": "27017",
@@ -237,7 +237,7 @@
         "id": "260e45057b94b302",
         "type": "mqtt-broker",
         "name": "Broker",
-        "broker": "smqtt.juhlin.me",
+        "broker": "mqtt.juhlin.me",
         "port": "1883",
         "clientid": "",
         "autoConnect": true,
@@ -3668,7 +3668,8 @@
         "y": 260,
         "wires": [
             [
-                "98128e98209601ad"
+                "98128e98209601ad",
+                "367edef341e03848"
             ]
         ]
     },
@@ -3789,8 +3790,7 @@
             [
                 "95343f7c8fd5b539",
                 "aaf6af7486ae7adf"
-            ],
-            []
+            ]
         ]
     },
     {
