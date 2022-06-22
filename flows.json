@@ -229,7 +229,7 @@
         "id": "260e45057b94b302",
         "type": "mqtt-broker",
         "name": "Broker",
-        "broker": "10.13.8.20",
+        "broker": "smqtt.juhlin.me",
         "port": "1883",
         "clientid": "",
         "autoConnect": true,
