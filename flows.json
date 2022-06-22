@@ -48,7 +48,7 @@
     {
         "id": "613bd474aa619f30",
         "type": "tab",
-        "label": "Merge",
+        "label": "Work In Progress",
         "disabled": true,
         "info": "",
         "env": []
@@ -60,8 +60,8 @@
         "topology": "direct",
         "connectOptions": "",
         "port": "27017",
-        "db": "log",
-        "name": "mongo"
+        "db": "objectpath",
+        "name": ""
     },
     {
         "id": "a36251364e32fe2d",
@@ -345,12 +345,12 @@
         "z": "251e28d43075d4af",
         "mongodb": "b12a9cc543227135",
         "name": "",
-        "collection": "objectpath",
+        "collection": "detections",
         "payonly": true,
         "upsert": false,
         "multi": false,
         "operation": "insert",
-        "x": 490,
+        "x": 510,
         "y": 100,
         "wires": []
     },
@@ -408,12 +408,12 @@
         "z": "251e28d43075d4af",
         "mongodb": "b12a9cc543227135",
         "name": "",
-        "collection": "objectpath",
+        "collection": "detections",
         "payonly": false,
         "upsert": false,
         "multi": false,
         "operation": "delete",
-        "x": 690,
+        "x": 710,
         "y": 280,
         "wires": []
     },
@@ -476,7 +476,7 @@
         "upsert": false,
         "multi": false,
         "operation": "delete",
-        "x": 680,
+        "x": 700,
         "y": 320,
         "wires": []
     },
@@ -489,7 +489,7 @@
         "order": 2,
         "width": "13",
         "height": "13",
-        "format": "<link rel=\"stylesheet\" href=\"/css/imgareaselect-default.css\">\n<script src=\"/js/jquery.imgareaselect.js\"></script>\n\n<div id=\"{{'view_'+$id}}\" style=\"width:640px; height:360px\">\n    <div id=\"{{'frame_'+$id}}\" style=\"width:100%; height:100%; position:relative\">\n        <img id=\"{{'image_'+$id}}\" class=\"card-img-top\" src=\"\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\">\n        <canvas id=\"{{'canvas_'+$id}}\" width=\"1000\" height=\"1000\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\"></canvas>\n    </div>\n</div>\n\n<script>\nvar ctx = null;\nvar imageWidth = 640;\nvar imageHeight = 360;\nvar transperancy = 1.0;\n\nvar selectionArea = null;\nvar areaName = null;\n\nfunction ClearCanvas() {\n    if(ctx) {\n        ctx.beginPath();\n        ctx.clearRect(0, 0, 1000, 1000 );\n        ctx.stroke();\n    }\n\n    if( selectionArea )\n        selectionArea.setOptions({ hide: true });\n    selectionArea = null;        \n}\n\n\n(function(scope) {\n    scope.$watch('msg', function(msg) {\n        if( !msg || !msg.topic ||  typeof msg.topic === undefined || !msg.payload )\n            return;\n        console.log(msg.topic);\n\n\n        if( msg.topic === \"transperancy\" ) {\n            transperancy = parseFloat(msg.payload) / 100.0;\n        }\n\n        if( msg.topic === \"camera\") {\n            ClearCanvas();\n\n            imageWidth = 640;\n            imageHeight = 360;\n            \n            if( msg.payload.image.aspect === \"1:1\") {\n                imageWidth = 640;\n                imageHeight = 640;\n            }\n\n            if( msg.payload.image.aspect === \"4:3\") {\n                imageWidth = 640;\n                imageHeight = 480;\n            }\n\n            if( msg.payload.image.rotation === 90 || msg.payload.image.rotation === 270 ) {\n                var temp  = imageWidth;\n                imageWidth = imageHeight;\n                imageHeight = temp;\n            }\n\n\n            $(\"#view_\" + scope.$id).css(\"width\",imageWidth + \"px\");\n            $(\"#view_\" + scope.$id).css(\"height\",imageHeight + \"px\");\n            \n            if( msg.payload.image.jpeg)\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ' + msg.payload.image.jpeg);\n            else\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n            \n            if(!ctx) {\n                canvas = document.getElementById(\"canvas_\"+scope.$id);\n                ctx = canvas.getContext(\"2d\");\n            }\n            return;\n        }\n\n        if( msg.topic === \"image\") {\n            if( msg.payload.base64)\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ' + msg.payload.base64);\n            return;\n        }\n\n\n        if( msg.topic === \"objectpaths\" ) {\n            if(!ctx)\n                return;\n            ClearCanvas();\n        \tif( msg.payload.length > 5 )\n            \tctx.globalAlpha = transperancy;\n            else\n                ctx.globalAlpha = 1.0;\n                \n            msg.payload.forEach(function(object){\n                var first = object.path[0];\n                var last = object.path[object.path.length-1];\n\n            \tctx.beginPath();\n            \tctx.lineWidth = 3;\n            \tctx.strokeStyle = '#00FF00';\n            \tctx.moveTo(first.x, first.y );\n            \tctx.arc(first.x, first.y, 3, 0, 2 * Math.PI);\n            \tctx.stroke();\t\n\n            \tctx.beginPath();\n            \tctx.strokeStyle = '#FFFF00';\n            \tctx.moveTo(object.path[0].x, object.path[0].y );\n            \tfor( var i = 1; i < object.path.length; i++ )\n            \t\tctx.lineTo(object.path[i].x,object.path[i].y );\n            \tctx.lineTo(last.x,last.y );\n            \tctx.stroke();\t\n            \n            \tctx.beginPath();\n            \tctx.lineWidth = 3;\n            \tctx.strokeStyle = '#FF0000';\n            \tctx.moveTo(last.x, last.y );\n            \tctx.arc(last.x, last.y, 3, 0, 2 * Math.PI);\n            \tctx.stroke();\t\n            });\n\t\t\treturn;\n        }\n\n        if( msg.topic === \"resetCamera\" ) {\n            ClearCanvas();\n            $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n        }\n\n        if( msg.topic === \"reset\" ) {\n            ClearCanvas();\n            return;\n        }\n\n\t\tif( msg.topic === \"birth\" || msg.topic === \"death\" ) {\n\t\t    areaName = msg.topic;\n\t\t    if(!selectionArea) {\n    \t\t\tselectionArea = $(\"#image_\"+scope.$id).imgAreaSelect( {\n    \t\t\t\tx1: parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\t\tx2: parseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\t\ty1: parseInt(msg.payload.y1 / 1000 * imageHeight),\n    \t\t\t\ty2: parseInt(msg.payload.y2 / 1000 * imageHeight),\n    \t\t\t\tshow: true, hide:false, minHeight: 5, minWidth: 5, handles: true, movable: true, resizable: true, instance:true,\n    \t\t\t\tonSelectEnd: function( image, area ) {\n    \t\t\t\t    var area = {\n                            x1: parseInt((area.x1/imageWidth) * 1000),\n                            x2: parseInt((area.x2/imageWidth) * 1000),\n                            y1: parseInt((area.y1/imageHeight) * 1000),\n                            y2: parseInt((area.y2/imageHeight) * 1000)\n    \t\t\t\t    }\n    \t\t\t\t\tscope.send({\n    \t\t\t\t\t\ttopic: areaName,\n    \t\t\t\t\t\tpayload: area\n    \t\t\t\t\t});\n    \t\t\t\t}\n    \t\t\t});\n\t\t    }\n\t\t    selectionArea.setSelection(\n\t\t        parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y1 / 1000 * imageHeight),\n\t\t\t\tparseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y2 / 1000 * imageHeight)\n\t\t    );\n            selectionArea.setOptions({ show: true });\n\t\t}\n    });\n})(scope);\n</script>        \n",
+        "format": "<link rel=\"stylesheet\" href=\"/css/imgareaselect-default.css\">\n<script src=\"/js/jquery.imgareaselect.js\"></script>\n\n<div id=\"{{'view_'+$id}}\" style=\"width:640px; height:360px\">\n    <div id=\"{{'frame_'+$id}}\" style=\"width:100%; height:100%; position:relative\">\n        <img id=\"{{'image_'+$id}}\" class=\"card-img-top\" src=\"\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\">\n        <canvas id=\"{{'canvas_'+$id}}\" width=\"1000\" height=\"1000\" style=\"width:100%; height:100%; position:absolute; top:0px; left:0px;\"></canvas>\n    </div>\n</div>\n\n<script>\nvar ctx = null;\nvar imageWidth = 640;\nvar imageHeight = 360;\nvar transperancy = 1.0;\nvar objectpaths = [];\n\nvar selectionArea = null;\nvar areaName = null;\n\nfunction ClearCanvas() {\n    if(ctx) {\n        ctx.beginPath();\n        ctx.clearRect(0, 0, 1000, 1000 );\n        ctx.stroke();\n    }\n\n    if( selectionArea )\n        selectionArea.setOptions({ hide: true });\n    selectionArea = null;        \n}\n\nfunction drawPaths( paths ) {\n    if(!ctx)\n        return;\n    ClearCanvas();\n\tif( paths.length > 5 )\n    \tctx.globalAlpha = transperancy;\n    else\n        ctx.globalAlpha = 1.0;\n        \n    paths.forEach(function(object){\n        var first = object.path[0];\n        var last = object.path[object.path.length-1];\n\n    \tctx.beginPath();\n    \tctx.lineWidth = 3;\n    \tctx.strokeStyle = '#00FF00';\n    \tctx.moveTo(first.x, first.y );\n    \tctx.arc(first.x, first.y, 3, 0, 2 * Math.PI);\n    \tctx.stroke();\t\n\n    \tctx.beginPath();\n    \tctx.strokeStyle = '#FFFF00';\n    \tctx.moveTo(object.path[0].x, object.path[0].y );\n    \tfor( var i = 1; i < object.path.length; i++ )\n    \t\tctx.lineTo(object.path[i].x,object.path[i].y );\n    \tctx.lineTo(last.x,last.y );\n    \tctx.stroke();\t\n    \n    \tctx.beginPath();\n    \tctx.lineWidth = 3;\n    \tctx.strokeStyle = '#FF0000';\n    \tctx.moveTo(last.x, last.y );\n    \tctx.arc(last.x, last.y, 3, 0, 2 * Math.PI);\n    \tctx.stroke();\t\n    });\n}\n\n\n(function(scope) {\n    scope.$watch('msg', function(msg) {\n        if( !msg || !msg.topic ||  typeof msg.topic === undefined || !msg.payload )\n            return;\n        console.log(msg.topic);\n\n\n        if( msg.topic === \"transperancy\" ) {\n            transperancy = parseFloat(msg.payload) / 100.0;\n            drawPaths( objectpaths );\n        }\n\n        if( msg.topic === \"camera\") {\n            ClearCanvas();\n\n            imageWidth = 640;\n            imageHeight = 360;\n            \n            if( msg.payload.image.aspect === \"1:1\") {\n                imageWidth = 640;\n                imageHeight = 640;\n            }\n\n            if( msg.payload.image.aspect === \"4:3\") {\n                imageWidth = 640;\n                imageHeight = 480;\n            }\n\n            if( msg.payload.image.rotation === 90 || msg.payload.image.rotation === 270 ) {\n                var temp  = imageWidth;\n                imageWidth = imageHeight;\n                imageHeight = temp;\n            }\n\n\n            $(\"#view_\" + scope.$id).css(\"width\",imageWidth + \"px\");\n            $(\"#view_\" + scope.$id).css(\"height\",imageHeight + \"px\");\n            \n            if( msg.payload.image.jpeg)\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ' + msg.payload.image.jpeg);\n            else\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n            \n            if(!ctx) {\n                canvas = document.getElementById(\"canvas_\"+scope.$id);\n                ctx = canvas.getContext(\"2d\");\n            }\n            return;\n        }\n\n        if( msg.topic === \"image\") {\n            if( msg.payload.base64)\n                $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ' + msg.payload.base64);\n            return;\n        }\n\n\n        if( msg.topic === \"objectpaths\" ) {\n\n            objectpaths = msg.payload;\n            drawPaths( objectpaths );\n\t\t\treturn;\n        }\n\n        if( msg.topic === \"resetCamera\" ) {\n            ClearCanvas();\n            $(\"#image_\"+scope.$id).attr(\"src\", 'data:image/jpeg;base64, ');\n        }\n\n        if( msg.topic === \"reset\" ) {\n            ClearCanvas();\n            return;\n        }\n\n\t\tif( msg.topic === \"birth\" || msg.topic === \"death\" ) {\n\t\t    areaName = msg.topic;\n\t\t    if(!selectionArea) {\n    \t\t\tselectionArea = $(\"#image_\"+scope.$id).imgAreaSelect( {\n    \t\t\t\tx1: parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\t\tx2: parseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\t\ty1: parseInt(msg.payload.y1 / 1000 * imageHeight),\n    \t\t\t\ty2: parseInt(msg.payload.y2 / 1000 * imageHeight),\n    \t\t\t\tshow: true, hide:false, minHeight: 5, minWidth: 5, handles: true, movable: true, resizable: true, instance:true,\n    \t\t\t\tonSelectEnd: function( image, area ) {\n    \t\t\t\t    var area = {\n                            x1: parseInt((area.x1/imageWidth) * 1000),\n                            x2: parseInt((area.x2/imageWidth) * 1000),\n                            y1: parseInt((area.y1/imageHeight) * 1000),\n                            y2: parseInt((area.y2/imageHeight) * 1000)\n    \t\t\t\t    }\n    \t\t\t\t\tscope.send({\n    \t\t\t\t\t\ttopic: areaName,\n    \t\t\t\t\t\tpayload: area\n    \t\t\t\t\t});\n    \t\t\t\t}\n    \t\t\t});\n\t\t    }\n\t\t    selectionArea.setSelection(\n\t\t        parseInt(msg.payload.x1 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y1 / 1000 * imageHeight),\n\t\t\t\tparseInt(msg.payload.x2 / 1000 * imageWidth),\n    \t\t\tparseInt(msg.payload.y2 / 1000 * imageHeight)\n\t\t    );\n            selectionArea.setOptions({ show: true });\n\t\t}\n    });\n})(scope);\n</script>        \n",
         "storeOutMessages": false,
         "fwdInMessages": false,
         "resendOnRefresh": false,
@@ -561,10 +561,7 @@
         "z": "8e42a2bf.e54b8",
         "name": "",
         "mode": "link",
-        "links": [
-            "7900abcef297adaf",
-            "fb839fad.d21a9"
-        ],
+        "links": [],
         "x": 735,
         "y": 560,
         "wires": []
@@ -595,8 +592,7 @@
         "y": 120,
         "wires": [
             [
-                "daa2daa3.3b2fb8",
-                "027a4ca0528757ed"
+                "daa2daa3.3b2fb8"
             ]
         ]
     },
@@ -908,22 +904,6 @@
         "wires": []
     },
     {
-        "id": "027a4ca0528757ed",
-        "type": "debug",
-        "z": "8e42a2bf.e54b8",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 480,
-        "y": 80,
-        "wires": []
-    },
-    {
         "id": "abfe81e068d09a16",
         "type": "link out",
         "z": "3658f92f65d797b7",
@@ -932,7 +912,7 @@
             "fb839fad.d21a9",
             "570704ac76cf97e0"
         ],
-        "x": 1095,
+        "x": 1175,
         "y": 100,
         "wires": []
     },
@@ -1005,8 +985,7 @@
             [
                 "44f2f0f64df1d55a",
                 "612d445635fd947b",
-                "bb8a987d112f3d8a",
-                "355aa73c81e2bcdf"
+                "bb8a987d112f3d8a"
             ]
         ]
     },
@@ -1075,7 +1054,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 970,
+        "x": 1050,
         "y": 100,
         "wires": [
             [
@@ -1207,9 +1186,9 @@
         "z": "3658f92f65d797b7",
         "mongodb": "b12a9cc543227135",
         "name": "",
-        "collection": "objectpath",
+        "collection": "detections",
         "operation": "find",
-        "x": 790,
+        "x": 820,
         "y": 100,
         "wires": [
             [
@@ -1223,7 +1202,7 @@
         "z": "3658f92f65d797b7",
         "name": "Paths",
         "info": "",
-        "x": 1170,
+        "x": 1250,
         "y": 100,
         "wires": []
     },
@@ -1322,7 +1301,7 @@
         "name": "",
         "collection": "images",
         "operation": "find",
-        "x": 780,
+        "x": 810,
         "y": 140,
         "wires": [
             [
@@ -1341,7 +1320,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 970,
+        "x": 1050,
         "y": 140,
         "wires": [
             [
@@ -1358,7 +1337,7 @@
         "links": [
             "597076107473225f"
         ],
-        "x": 1095,
+        "x": 1175,
         "y": 140,
         "wires": []
     },
@@ -1368,7 +1347,7 @@
         "z": "3658f92f65d797b7",
         "name": "image",
         "info": "",
-        "x": 1170,
+        "x": 1250,
         "y": 140,
         "wires": []
     },
@@ -1383,22 +1362,6 @@
         ],
         "x": 575,
         "y": 180,
-        "wires": []
-    },
-    {
-        "id": "355aa73c81e2bcdf",
-        "type": "debug",
-        "z": "3658f92f65d797b7",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 640,
-        "y": 40,
         "wires": []
     },
     {
@@ -1420,7 +1383,7 @@
         "topic": "",
         "topicType": "str",
         "className": "",
-        "x": 1200,
+        "x": 1320,
         "y": 380,
         "wires": [
             [
@@ -1549,7 +1512,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 860,
+        "x": 980,
         "y": 440,
         "wires": [
             [
@@ -1568,7 +1531,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1040,
+        "x": 1140,
         "y": 380,
         "wires": [
             [
@@ -1588,7 +1551,7 @@
             "5c1757bec784e133",
             "f6cd686caf9ae7e6"
         ],
-        "x": 1165,
+        "x": 1285,
         "y": 440,
         "wires": []
     },
@@ -1598,7 +1561,7 @@
         "z": "e1d661b05780e560",
         "name": "Camera",
         "info": "",
-        "x": 1230,
+        "x": 1350,
         "y": 440,
         "wires": []
     },
@@ -1621,7 +1584,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1040,
+        "x": 1160,
         "y": 440,
         "wires": [
             [
@@ -1638,7 +1601,7 @@
         "name": "",
         "collection": "cameras",
         "operation": "aggregate",
-        "x": 680,
+        "x": 730,
         "y": 380,
         "wires": [
             [
@@ -1673,7 +1636,7 @@
         "name": "",
         "collection": "cameras",
         "operation": "find",
-        "x": 680,
+        "x": 730,
         "y": 440,
         "wires": [
             [
@@ -1742,7 +1705,7 @@
         "links": [
             "d7f8d78d063b714e"
         ],
-        "x": 1165,
+        "x": 1285,
         "y": 480,
         "wires": []
     },
@@ -1752,7 +1715,7 @@
         "z": "e1d661b05780e560",
         "name": "Query",
         "info": "",
-        "x": 1230,
+        "x": 1350,
         "y": 480,
         "wires": []
     },
@@ -1767,7 +1730,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 860,
+        "x": 980,
         "y": 480,
         "wires": [
             [
@@ -1788,7 +1751,7 @@
             "f1685b5b0e483973",
             "40e26c274871fc09"
         ],
-        "x": 975,
+        "x": 1095,
         "y": 480,
         "wires": []
     },
@@ -1798,7 +1761,7 @@
         "z": "e1d661b05780e560",
         "name": "Reset",
         "info": "",
-        "x": 1050,
+        "x": 1170,
         "y": 480,
         "wires": []
     },
@@ -2187,9 +2150,9 @@
         "z": "e1d661b05780e560",
         "mongodb": "b12a9cc543227135",
         "name": "",
-        "collection": "objectpath",
+        "collection": "detections",
         "operation": "find",
-        "x": 590,
+        "x": 640,
         "y": 680,
         "wires": [
             [
@@ -2216,7 +2179,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 970,
+        "x": 1070,
         "y": 680,
         "wires": [
             [
@@ -2311,7 +2274,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 780,
+        "x": 880,
         "y": 680,
         "wires": [
             [
@@ -2347,7 +2310,7 @@
         "links": [
             "5614b0cac7fba069"
         ],
-        "x": 1145,
+        "x": 1245,
         "y": 680,
         "wires": []
     },
@@ -2367,7 +2330,7 @@
         "z": "e1d661b05780e560",
         "name": "Output",
         "info": "",
-        "x": 1210,
+        "x": 1310,
         "y": 680,
         "wires": []
     },
@@ -3250,7 +3213,7 @@
         "msgKeyType": "jsonata",
         "seqKey": "payload",
         "seqKeyType": "msg",
-        "x": 870,
+        "x": 970,
         "y": 380,
         "wires": [
             [
@@ -3269,7 +3232,7 @@
         "output": "Base64",
         "filename": "",
         "options": "",
-        "x": 830,
+        "x": 950,
         "y": 260,
         "wires": [
             [
@@ -3288,7 +3251,7 @@
         "output": "Base64",
         "filename": "",
         "options": "",
-        "x": 830,
+        "x": 950,
         "y": 320,
         "wires": [
             [
@@ -3307,7 +3270,7 @@
         "data": "",
         "options": "",
         "filename": "",
-        "x": 830,
+        "x": 950,
         "y": 200,
         "wires": [
             [
@@ -3327,12 +3290,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1130,
+        "x": 1250,
         "y": 200,
         "wires": [
             [
-                "a6006e34179d2d40",
-                "eb83df2c0498c155"
+                "a6006e34179d2d40"
             ]
         ]
     },
@@ -3353,7 +3315,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 990,
+        "x": 1110,
         "y": 140,
         "wires": [
             [
@@ -3378,7 +3340,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 990,
+        "x": 1110,
         "y": 200,
         "wires": [
             [
@@ -3397,7 +3359,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1050,
+        "x": 1170,
         "y": 260,
         "wires": [
             [
@@ -3416,7 +3378,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1050,
+        "x": 1170,
         "y": 320,
         "wires": [
             [
@@ -3435,7 +3397,7 @@
         "upsert": true,
         "multi": false,
         "operation": "update",
-        "x": 1060,
+        "x": 1180,
         "y": 380,
         "wires": []
     },
@@ -3450,7 +3412,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 820,
+        "x": 940,
         "y": 380,
         "wires": [
             [
@@ -3467,7 +3429,7 @@
         "name": "",
         "collection": "cameras",
         "operation": "aggregate",
-        "x": 1260,
+        "x": 1430,
         "y": 440,
         "wires": [
             [
@@ -3546,7 +3508,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 640,
+        "x": 760,
         "y": 200,
         "wires": [
             [
@@ -3580,7 +3542,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1140,
+        "x": 1260,
         "y": 140,
         "wires": [
             [
@@ -3603,7 +3565,7 @@
         "className": "",
         "topic": "",
         "name": "",
-        "x": 1330,
+        "x": 1450,
         "y": 140,
         "wires": [
             []
@@ -3690,7 +3652,7 @@
         ],
         "outputs": 0,
         "cts": false,
-        "x": 1630,
+        "x": 1810,
         "y": 440,
         "wires": []
     },
@@ -3702,7 +3664,7 @@
         "name": "",
         "collection": "cameras",
         "operation": "aggregate",
-        "x": 320,
+        "x": 370,
         "y": 260,
         "wires": [
             [
@@ -3721,7 +3683,7 @@
         "arraySpltType": "len",
         "stream": false,
         "addname": "",
-        "x": 490,
+        "x": 590,
         "y": 260,
         "wires": [
             [
@@ -3746,45 +3708,13 @@
         "bytopic": "all",
         "topic": "topic",
         "outputs": 1,
-        "x": 1060,
+        "x": 1180,
         "y": 440,
         "wires": [
             [
                 "6c5dfc0e5dfc67ba"
             ]
         ]
-    },
-    {
-        "id": "eb83df2c0498c155",
-        "type": "debug",
-        "z": "28ebc073.75bf28",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1320,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "43f971607bb8e4f1",
-        "type": "debug",
-        "z": "28ebc073.75bf28",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1650,
-        "y": 380,
-        "wires": []
     },
     {
         "id": "42c6e40963f7ab71",
@@ -3797,12 +3727,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1450,
+        "x": 1650,
         "y": 440,
         "wires": [
             [
-                "329e3619966aa3fb",
-                "43f971607bb8e4f1"
+                "329e3619966aa3fb"
             ]
         ]
     },
@@ -3864,7 +3793,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 950,
+        "x": 900,
         "y": 220,
         "wires": [
             [
@@ -3883,7 +3812,7 @@
         "upsert": false,
         "multi": false,
         "operation": "insert",
-        "x": 1150,
+        "x": 1160,
         "y": 220,
         "wires": []
     },
@@ -3904,7 +3833,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 940,
+        "x": 890,
         "y": 260,
         "wires": [
             [
@@ -3969,7 +3898,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 960,
+        "x": 910,
         "y": 160,
         "wires": [
             [
@@ -3985,7 +3914,7 @@
         "name": "",
         "collection": "cameras",
         "operation": "find",
-        "x": 1150,
+        "x": 1160,
         "y": 160,
         "wires": [
             [
@@ -4035,7 +3964,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1120,
+        "x": 1070,
         "y": 260,
         "wires": []
     },
@@ -4066,7 +3995,7 @@
         "name": "",
         "collection": "objectpath",
         "operation": "find",
-        "x": 710,
+        "x": 760,
         "y": 680,
         "wires": [
             [
@@ -4099,7 +4028,7 @@
         "topic": "topic",
         "topicType": "msg",
         "className": "",
-        "x": 740,
+        "x": 800,
         "y": 280,
         "wires": [
             [
@@ -4137,7 +4066,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
+        "x": 970,
         "y": 280,
         "wires": [
             [
@@ -4172,7 +4101,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 580,
+        "x": 640,
         "y": 340,
         "wires": [
             [
@@ -4199,7 +4128,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 760,
+        "x": 820,
         "y": 340,
         "wires": [
             [
@@ -4387,7 +4316,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 580,
+        "x": 640,
         "y": 280,
         "wires": [
             [
@@ -4430,7 +4359,7 @@
             "697f7acf2f6fa429",
             "b7919f8b9f875594"
         ],
-        "x": 925,
+        "x": 985,
         "y": 340,
         "wires": []
     },
@@ -4706,7 +4635,7 @@
         "name": "",
         "collection": "merge_area",
         "operation": "find",
-        "x": 670,
+        "x": 720,
         "y": 420,
         "wires": [
             [
@@ -4736,7 +4665,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 860,
+        "x": 950,
         "y": 420,
         "wires": [
             [
@@ -4758,7 +4687,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
+        "x": 1140,
         "y": 420,
         "wires": [
             [
@@ -4775,7 +4704,7 @@
         "links": [
             "697f7acf2f6fa429"
         ],
-        "x": 1285,
+        "x": 1345,
         "y": 420,
         "wires": []
     },
@@ -4790,7 +4719,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1090,
+        "x": 1150,
         "y": 460,
         "wires": [
             [
@@ -4852,7 +4781,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 960,
+        "x": 1030,
         "y": 680,
         "wires": [
             [
@@ -4869,7 +4798,7 @@
         "links": [
             "697f7acf2f6fa429"
         ],
-        "x": 1125,
+        "x": 1195,
         "y": 680,
         "wires": []
     },
@@ -4958,7 +4887,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1620,
+        "x": 1680,
         "y": 80,
         "wires": [
             [
@@ -5104,7 +5033,7 @@
         "name": "",
         "collection": "objectpath",
         "operation": "find",
-        "x": 710,
+        "x": 760,
         "y": 720,
         "wires": [
             [
@@ -5151,7 +5080,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 960,
+        "x": 1030,
         "y": 720,
         "wires": [
             [
@@ -5168,7 +5097,7 @@
         "links": [
             "697f7acf2f6fa429"
         ],
-        "x": 1125,
+        "x": 1195,
         "y": 720,
         "wires": []
     }
